@@ -1,0 +1,156 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String
+  password  String
+  role      Role       @default(STUDENT)
+  
+  // Relations
+  attendance    Attendance[]
+  activities    Activity[]
+  achievements  Achievement[]
+  reports       Report[]
+  notifications Notification[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  date      DateTime
+  loginTime DateTime?
+  logoutTime DateTime?
+  duration  Int?      @default(0)  // In minutes
+  status    AttendanceStatus @default(ABSENT)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([date])
+  @@unique([studentId, date])
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  activityType ActivityType
+  description  String?
+  points      Int      @default(0)
+  
+  createdAt DateTime @default(now())
+
+  @@index([studentId])
+  @@index([activityType])
+  @@index([createdAt])
+}
+
+enum ActivityType {
+  LOGIN
+  LOGOUT
+  ATTENDANCE_MARKED
+  TASK_COMPLETED
+  ASSIGNMENT_SUBMITTED
+  MODULE_COMPLETED
+  CODE_SUBMITTED
+  DISCUSSION_PARTICIPATED
+}
+
+model Achievement {
+  id        String   @id @default(cuid())
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  title       String
+  description String?
+  badge       String   // Badge name/icon
+  
+  earnedAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@index([studentId])
+  @@unique([studentId, title])
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  month              DateTime
+  productivityScore  Float    @default(0)
+  attendancePercent  Float    @default(0)
+  taskCompletionRate Float    @default(0)
+  streakDays        Int      @default(0)
+  totalActivities    Int      @default(0)
+  achievementsCount  Int      @default(0)
+  
+  summary           String?
+  recommendations   String?
+  
+  generatedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@index([studentId])
+  @@index([month])
+  @@unique([studentId, month])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title     String
+  message   String
+  type      NotificationType
+  read      Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([read])
+}
+
+enum NotificationType {
+  ATTENDANCE_ALERT
+  ACHIEVEMENT_UNLOCKED
+  REPORT_GENERATED
+  STREAK_MILESTONE
+  AT_RISK_WARNING
+  GENERAL_INFO
+}
