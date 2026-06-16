@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Student Attendance Portal</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <!-- Chart.js CDN for visual analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">A</div>
+        <span class="brand-text">Portal Admin</span>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li class="menu-item active" id="tab-btn-dashboard" onclick="switchTab('dashboard')">
+          <a><i>📊</i> Dashboard</a>
+        </li>
+        <li class="menu-item" id="tab-btn-users" onclick="switchTab('users')">
+          <a><i>👥</i> Manage Users</a>
+        </li>
+        <li class="menu-item" id="tab-btn-logs" onclick="switchTab('logs')">
+          <a><i>📜</i> Audit Logs</a>
+        </li>
+        <li class="menu-item" id="tab-btn-settings" onclick="switchTab('settings')">
+          <a><i>⚙️</i> Account Settings</a>
+        </li>
+      </ul>
+
+      <div class="sidebar-user">
+        <div class="user-info">
+          <div class="user-avatar" id="ui-user-avatar">AD</div>
+          <div class="user-details">
+            <div class="user-name" id="ui-user-name">Loading...</div>
+            <div class="user-role" id="ui-user-role">Admin</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" onclick="API.logout()" style="padding: 8px 12px; font-size: 13px;">
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      
+      <header class="header">
+        <div class="header-title" id="header-page-title">Analytics Dashboard</div>
+        <div class="header-date" id="ui-current-date">Monday, June 15, 2026</div>
+      </header>
+
+      <main class="content-body animate-fade">
+        <div id="admin-alert" style="display: none;"></div>
+
+        <!-- 1. DASHBOARD TAB -->
+        <section id="tab-panel-dashboard" class="tab-panel active">
+          <!-- Overview Stats -->
+          <div class="stats-grid">
+            <div class="glass-card stat-card">
+              <div class="stat-details">
+                <span class="stat-label">Total Students</span>
+                <span class="stat-value" id="stat-students">0</span>
+              </div>
+              <div class="stat-icon">🎓</div>
+            </div>
+            <div class="glass-card stat-card">
+              <div class="stat-details">
+                <span class="stat-label">Total Teachers</span>
+                <span class="stat-value" id="stat-teachers">0</span>
+              </div>
+              <div class="stat-icon">👨‍🏫</div>
+            </div>
+            <div class="glass-card stat-card">
+              <div class="stat-details">
+                <span class="stat-label">Total Classes</span>
+                <span class="stat-value" id="stat-classes">0</span>
+              </div>
+              <div class="stat-icon">🏫</div>
+            </div>
+            <div class="glass-card stat-card">
+              <div class="stat-details">
+                <span class="stat-label">Daily Average</span>
+                <span class="stat-value" id="stat-average">0%</span>
+              </div>
+              <div class="stat-icon">📈</div>
+            </div>
+          </div>
+
+          <!-- Trend Chart & Defaulter Breakdown -->
+          <div class="dashboard-columns" style="margin-top: 24px;">
+            
+            <div class="glass-card">
+              <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">Overall Attendance Trends</h2>
+              <div style="position: relative; height: 300px; width: 100%;">
+                <canvas id="trendChart"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card" style="display: flex; flex-direction: column;">
+              <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Defaulter Alerts</h2>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Students with attendance lower than 75%</p>
+              
+              <div style="flex-grow: 1; overflow-y: auto; max-height: 270px; padding-right: 4px;" id="defaulter-list">
+                <!-- Seeding Dynamically -->
+                <div style="text-align: center; color: var(--text-muted); padding: 40px 0;">Loading list...</div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 2. USERS TAB -->
+        <section id="tab-panel-users" class="tab-panel">
+          <div class="dashboard-columns">
+            
+            <!-- User Table List -->
+            <div class="glass-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                <h2 style="font-size: 18px; font-weight: 600;">Registered Members</h2>
+                <div class="status-radio-group">
+                  <button class="btn btn-secondary" onclick="loadUsers('all')" style="padding: 6px 12px; font-size: 12px;">All</button>
+                  <button class="btn btn-secondary" onclick="loadUsers('teacher')" style="padding: 6px 12px; font-size: 12px;">Teachers</button>
+                  <button class="btn btn-secondary" onclick="loadUsers('student')" style="padding: 6px 12px; font-size: 12px;">Students</button>
+                </div>
+              </div>
+
+              <div class="table-container" style="max-height: 500px; overflow-y: auto;">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Role</th>
+                      <th>Class Assignment</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="users-table-body">
+                    <!-- Seeding Dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Create User Form -->
+            <div class="glass-card" style="height: fit-content;">
+              <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">Add New Member</h2>
+              
+              <form id="create-user-form">
+                <div class="form-group">
+                  <label class="form-label">Full Name</label>
+                  <input class="form-input" type="text" id="user-name" required placeholder="John Doe">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Email Address</label>
+                  <input class="form-input" type="email" id="user-email" required placeholder="john@portal.com">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Password</label>
+                  <input class="form-input" type="password" id="user-password" required placeholder="••••••••">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Role</label>
+                  <select class="form-select" id="user-role" onchange="toggleFormClassSelect()" required>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="admin">Administrator</option>
+                  </select>
+                </div>
+
+                <div class="form-group" id="class-select-group">
+                  <label class="form-label">Class Enrollment</label>
+                  <select class="form-select" id="user-class">
+                    <!-- Seeding Dynamically -->
+                  </select>
+                </div>
+
+                <button class="btn" type="submit" style="margin-top: 8px;">Create Account</button>
+              </form>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 3. AUDIT LOGS TAB -->
+        <section id="tab-panel-logs" class="tab-panel">
+          <div class="glass-card">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Audit Logs</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Tracking recent administrative operations and transactions</p>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Operator</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody id="logs-table-body">
+                  <!-- Seeding Dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. SETTINGS TAB -->
+        <section id="tab-panel-settings" class="tab-panel">
+          <div class="glass-card" style="max-width: 480px; margin: 0 auto;">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Update Password</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Protect your account by setting a secure credentials key</p>
+
+            <form id="reset-password-form">
+              <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input class="form-input" type="password" id="pw-current" required placeholder="••••••••">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input class="form-input" type="password" id="pw-new" required placeholder="••••••••">
+              </div>
+
+              <button class="btn" type="submit">Update Password</button>
+            </form>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

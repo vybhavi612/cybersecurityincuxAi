@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal - Student Attendance Portal</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">S</div>
+        <span class="brand-text">Portal Student</span>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li class="menu-item active" id="tab-btn-overview" onclick="switchTab('overview')">
+          <a><i>📈</i> My Attendance</a>
+        </li>
+        <li class="menu-item" id="tab-btn-settings" onclick="switchTab('settings')">
+          <a><i>⚙️</i> Account Settings</a>
+        </li>
+      </ul>
+
+      <div class="sidebar-user">
+        <div class="user-info">
+          <div class="user-avatar" id="ui-user-avatar">ST</div>
+          <div class="user-details">
+            <div class="user-name" id="ui-user-name">Loading...</div>
+            <div class="user-role" id="ui-user-role">Student</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" onclick="API.logout()" style="padding: 8px 12px; font-size: 13px;">
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      
+      <header class="header">
+        <div class="header-title" id="header-page-title">My Attendance Report</div>
+        <div class="header-date" id="ui-current-date">Monday, June 15, 2026</div>
+      </header>
+
+      <main class="content-body animate-fade">
+        <div id="student-alert" style="display: none;"></div>
+
+        <!-- 1. OVERVIEW & HISTORY TAB -->
+        <section id="tab-panel-overview" class="tab-panel active">
+          
+          <!-- Defaulter Warning Banner (Conditionally rendered) -->
+          <div class="alert alert-error" id="low-attendance-banner" style="display: none; align-items: center; border-radius: 12px; margin-bottom: 24px; padding: 20px;">
+            <span style="font-size: 24px;">⚠️</span>
+            <div style="margin-left: 12px; text-align: left;">
+              <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 2px;">Low Attendance Warning</h4>
+              <p style="font-size: 13px; color: #fca5a5;">Your attendance is currently below 75%. Please attend regularly and contact your advisor to avoid academic probation.</p>
+            </div>
+          </div>
+
+          <div class="dashboard-columns">
+            
+            <!-- Left Side: Circular Gauge & Subject List -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+              
+              <!-- Circular Progress Card -->
+              <div class="glass-card" style="text-align: center;">
+                <h3 style="font-size: 16px; font-weight: 600; color: var(--text-muted);">Overall Attendance</h3>
+                
+                <div class="circle-gauge-container">
+                  <div class="circle-gauge">
+                    <svg>
+                      <circle class="circle-bg" cx="75" cy="75" r="70"></circle>
+                      <circle class="circle-progress" id="gauge-circle" cx="75" cy="75" r="70"></circle>
+                    </svg>
+                    <div class="circle-gauge-value" id="gauge-value">0%</div>
+                  </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-around; margin-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 16px;">
+                  <div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Present</div>
+                    <div style="font-size: 18px; font-weight: 700; color: var(--present);" id="total-present">0</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Absent</div>
+                    <div style="font-size: 18px; font-weight: 700; color: var(--absent);" id="total-absent">0</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Late</div>
+                    <div style="font-size: 18px; font-weight: 700; color: var(--late);" id="total-late">0</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Excused</div>
+                    <div style="font-size: 18px; font-weight: 700; color: var(--excused);" id="total-excused">0</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Subject-wise Breakdown -->
+              <div class="glass-card">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Subject Wise Breakdown</h3>
+                <div style="display: flex; flex-direction: column; gap: 16px;" id="subject-list-container">
+                  <!-- Loaded Dynamically -->
+                  <div style="text-align: center; color: var(--text-muted);">Loading subjects...</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right Side: Detailed Log History -->
+            <div class="glass-card" style="display: flex; flex-direction: column; height: 100%;">
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Detailed Attendance Log</h3>
+              
+              <div class="table-container" style="flex-grow: 1; max-height: 550px; overflow-y: auto; padding-right: 4px;">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Subject</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="history-table-body">
+                    <!-- Loaded Dynamically -->
+                    <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Loading log history...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 2. ACCOUNT SETTINGS TAB -->
+        <section id="tab-panel-settings" class="tab-panel">
+          <div class="glass-card" style="max-width: 480px; margin: 0 auto;">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Update Password</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Protect your account by setting a secure credentials key</p>
+
+            <form id="reset-password-form">
+              <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input class="form-input" type="password" id="pw-current" required placeholder="••••••••">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input class="form-input" type="password" id="pw-new" required placeholder="••••••••">
+              </div>
+
+              <button class="btn" type="submit">Update Password</button>
+            </form>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/student.js"></script>
+</body>
+</html>

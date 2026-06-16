@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Workspace - Student Attendance Portal</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">T</div>
+        <span class="brand-text">Portal Teacher</span>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li class="menu-item active" id="tab-btn-mark" onclick="switchTab('mark')">
+          <a><i>📝</i> Mark Attendance</a>
+        </li>
+        <li class="menu-item" id="tab-btn-upload" onclick="switchTab('upload')">
+          <a><i>📤</i> Bulk Upload</a>
+        </li>
+        <li class="menu-item" id="tab-btn-reports" onclick="switchTab('reports')">
+          <a><i>📄</i> Subject Reports</a>
+        </li>
+        <li class="menu-item" id="tab-btn-settings" onclick="switchTab('settings')">
+          <a><i>⚙️</i> Account Settings</a>
+        </li>
+      </ul>
+
+      <div class="sidebar-user">
+        <div class="user-info">
+          <div class="user-avatar" id="ui-user-avatar">TC</div>
+          <div class="user-details">
+            <div class="user-name" id="ui-user-name">Loading...</div>
+            <div class="user-role" id="ui-user-role">Teacher</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" onclick="API.logout()" style="padding: 8px 12px; font-size: 13px;">
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      
+      <header class="header">
+        <div class="header-title" id="header-page-title">Mark Attendance</div>
+        <div class="header-date" id="ui-current-date">Monday, June 15, 2026</div>
+      </header>
+
+      <main class="content-body animate-fade">
+        <div id="teacher-alert" style="display: none;"></div>
+
+        <!-- 1. MARK ATTENDANCE TAB -->
+        <section id="tab-panel-mark" class="tab-panel active">
+          <div class="glass-card">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">Class & Subject Selection</h2>
+            
+            <div class="class-setup-row">
+              <div class="form-group">
+                <label class="form-label">Class</label>
+                <select class="form-select" id="mark-class">
+                  <!-- Loaded Dynamically -->
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Subject</label>
+                <select class="form-select" id="mark-subject">
+                  <!-- Loaded Dynamically -->
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Date</label>
+                <input class="form-input" type="date" id="mark-date">
+              </div>
+
+              <button class="btn" onclick="loadRoster()" style="width: auto; height: 45px;">Load Class Roster</button>
+            </div>
+          </div>
+
+          <div class="glass-card" style="margin-top: 24px; display: none;" id="roster-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+              <h2 style="font-size: 18px; font-weight: 600;" id="roster-title">Student Attendance Roster</h2>
+              <span style="font-size: 14px; color: var(--text-muted);" id="auto-save-indicator">Ready to submit</span>
+            </div>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    <th>Email Address</th>
+                    <th>Attendance Status</th>
+                  </tr>
+                </thead>
+                <tbody id="roster-table-body">
+                  <!-- Seeded Dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+              <button class="btn" onclick="saveAttendance()" style="width: auto; min-width: 180px;">Save Attendance</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. BULK UPLOAD TAB -->
+        <section id="tab-panel-upload" class="tab-panel">
+          <div class="glass-card" style="max-width: 680px; margin: 0 auto;">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Bulk Attendance Import</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Upload a CSV spreadsheet matching the structural template below</p>
+
+            <!-- Template Guide -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 16px; border-radius: 10px; margin-bottom: 24px;">
+              <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-main);">CSV Formatting Standard</h3>
+              <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+                The file must contain headers: <code>student_email,subject_code,date,status</code><br>
+                Status options: <strong>Present</strong>, <strong>Absent</strong>, <strong>Late</strong>, <strong>Excused</strong>.
+              </p>
+              <pre style="margin-top: 10px; padding: 10px; background: #0f1322; border-radius: 6px; font-size: 12px; color: var(--accent); overflow-x: auto;">student_email,subject_code,date,status
+student@portal.com,CS-101,2026-06-15,Present
+student2@portal.com,CS-101,2026-06-15,Absent</pre>
+            </div>
+
+            <!-- Upload box -->
+            <div class="drag-drop-zone" id="drop-zone" onclick="triggerFileSelect()">
+              <i>📤</i>
+              <div class="drag-drop-title">Select CSV Spreadsheet</div>
+              <div class="drag-drop-text">Drag and drop file here, or click to browse files</div>
+              <input type="file" id="csv-file-input" accept=".csv" style="display: none;" onchange="handleFileSelect(event)">
+            </div>
+
+            <!-- Upload Logs -->
+            <div id="upload-results" style="display: none; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+              <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;" id="results-count-title">Processing complete</h3>
+              <div style="max-height: 180px; overflow-y: auto; background: rgba(0, 0, 0, 0.15); padding: 12px; border-radius: 8px;" id="results-log-list">
+                <!-- Seeding Dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. REPORTS TAB -->
+        <section id="tab-panel-reports" class="tab-panel">
+          <div class="glass-card">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">Class Attendance Summaries</h2>
+            
+            <div class="class-setup-row">
+              <div class="form-group">
+                <label class="form-label">Class</label>
+                <select class="form-select" id="report-class">
+                  <!-- Loaded Dynamically -->
+                </select>
+              </div>
+
+              <button class="btn" onclick="generateReport()" style="width: auto; height: 45px;">Generate Summary</button>
+              <button class="btn btn-secondary" onclick="exportCSVReport()" style="width: auto; height: 45px; display: inline-flex; align-items: center; gap: 8px;">
+                <i>📥</i> Export DB Logs
+              </button>
+            </div>
+          </div>
+
+          <div class="glass-card" style="margin-top: 24px; display: none;" id="report-card">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;" id="report-title">Class Evaluation Report</h2>
+
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    <th>Email Address</th>
+                    <th>Presents</th>
+                    <th>Lates</th>
+                    <th>Absents</th>
+                    <th>Excused</th>
+                    <th>Active Sessions</th>
+                    <th>Attendance Score</th>
+                  </tr>
+                </thead>
+                <tbody id="report-table-body">
+                  <!-- Seeded Dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. SETTINGS TAB -->
+        <section id="tab-panel-settings" class="tab-panel">
+          <div class="glass-card" style="max-width: 480px; margin: 0 auto;">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Update Password</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Protect your account by setting a secure credentials key</p>
+
+            <form id="reset-password-form">
+              <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input class="form-input" type="password" id="pw-current" required placeholder="••••••••">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input class="form-input" type="password" id="pw-new" required placeholder="••••••••">
+              </div>
+
+              <button class="btn" type="submit">Update Password</button>
+            </form>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/teacher.js"></script>
+</body>
+</html>
