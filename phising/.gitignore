@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+
+datasets/network/network.csv
+
+models/network_model.pkl
+
+*.pkl
