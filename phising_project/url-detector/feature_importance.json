@@ -1,0 +1,122 @@
+[
+  {
+    "feature": "HTTPS",
+    "importance": 0.3154134941308072
+  },
+  {
+    "feature": "AnchorURL",
+    "importance": 0.26373311767575586
+  },
+  {
+    "feature": "WebsiteTraffic",
+    "importance": 0.06890477309373927
+  },
+  {
+    "feature": "SubDomains",
+    "importance": 0.061641609686249633
+  },
+  {
+    "feature": "LinksInScriptTags",
+    "importance": 0.04338068121442371
+  },
+  {
+    "feature": "PrefixSuffix-",
+    "importance": 0.04250051301839417
+  },
+  {
+    "feature": "ServerFormHandler",
+    "importance": 0.019371606184842072
+  },
+  {
+    "feature": "RequestURL",
+    "importance": 0.019198622732669295
+  },
+  {
+    "feature": "LinksPointingToPage",
+    "importance": 0.018780497501354423
+  },
+  {
+    "feature": "DomainRegLen",
+    "importance": 0.016752826213951893
+  },
+  {
+    "feature": "AgeofDomain",
+    "importance": 0.01549973423709156
+  },
+  {
+    "feature": "UsingIP",
+    "importance": 0.01278030172187422
+  },
+  {
+    "feature": "GoogleIndex",
+    "importance": 0.012589578475684902
+  },
+  {
+    "feature": "DNSRecording",
+    "importance": 0.011722559590846377
+  },
+  {
+    "feature": "PageRank",
+    "importance": 0.011615323844304653
+  },
+  {
+    "feature": "LongURL",
+    "importance": 0.00857661139415224
+  },
+  {
+    "feature": "HTTPSDomainURL",
+    "importance": 0.005879628676763852
+  },
+  {
+    "feature": "WebsiteForwarding",
+    "importance": 0.005462046743559242
+  },
+  {
+    "feature": "InfoEmail",
+    "importance": 0.005335614640484607
+  },
+  {
+    "feature": "ShortURL",
+    "importance": 0.005233129653384058
+  },
+  {
+    "feature": "Symbol@",
+    "importance": 0.004983073913563475
+  },
+  {
+    "feature": "UsingPopupWindow",
+    "importance": 0.004957401619080267
+  },
+  {
+    "feature": "StatsReport",
+    "importance": 0.004633724864794294
+  },
+  {
+    "feature": "AbnormalURL",
+    "importance": 0.004130420496177837
+  },
+  {
+    "feature": "Favicon",
+    "importance": 0.00412259371464393
+  },
+  {
+    "feature": "Redirecting//",
+    "importance": 0.0034580865589403237
+  },
+  {
+    "feature": "StatusBarCust",
+    "importance": 0.0032055201522006123
+  },
+  {
+    "feature": "IframeRedirection",
+    "importance": 0.0023435974497000365
+  },
+  {
+    "feature": "NonStdPort",
+    "importance": 0.002342129455495254
+  },
+  {
+    "feature": "DisableRightClick",
+    "importance": 0.001451181345070948
+  }
+]

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Phishing Awareness Dashboard</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #0f1117;
+    color: #e6e6e6;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 32px;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: 4px; }
+  p.sub { color: #888; margin-bottom: 28px; font-size: 0.9rem; }
+  .total {
+    display: inline-block;
+    background: #1c2030;
+    border: 1px solid #2a2f45;
+    border-radius: 10px;
+    padding: 10px 18px;
+    margin-bottom: 28px;
+    font-size: 0.9rem;
+  }
+  .total b { color: #e94560; font-size: 1.2rem; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+  .card {
+    background: #161925;
+    border: 1px solid #232842;
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .card h2 {
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .metric {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #1f2436;
+    font-size: 0.88rem;
+    color: #aab;
+  }
+  .metric:last-child { border-bottom: none; }
+  .metric b { color: #fff; font-size: 1rem; }
+  .metric.danger b { color: #ff6b6b; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #161925;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    border-bottom: 1px solid #1f2436;
+  }
+  th { color: #888; font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; }
+  td { color: #ccc; }
+  .tag {
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .tag.page_view { background: #1f3a52; color: #6cc6ff; }
+  .tag.credential_submit { background: #4a1f2a; color: #ff8a9a; }
+  .tag.otp_submit { background: #4a3a1f; color: #ffcf6c; }
+  .tag.exe_run { background: #3a1f4a; color: #c98aff; }
+</style>
+</head>
+<body>
+  <h1>🎯 Phishing Awareness Dashboard</h1>
+  <p class="sub">Live results from your 3 simulated phishing exercises</p>
+  <div class="total">Total events logged: <b id="total">0</b></div>
+
+  <div class="grid" id="cards"></div>
+
+  <h2 style="margin-bottom:14px; font-size:1.1rem;">Recent activity</h2>
+  <table>
+    <thead>
+      <tr><th>Time</th><th>Campaign</th><th>Event</th><th>IP</th></tr>
+    </thead>
+    <tbody id="recent-body"></tbody>
+  </table>
+
+<script>
+  const CAMPAIGN_LABELS = {
+    'ms-login': '🪟 Fake Microsoft Login',
+    'qr-otp':   '📱 QR Code → OTP Page',
+    'exe':      '📎 "PDF" That Was an EXE'
+  };
+  const TYPE_LABELS = {
+    page_view: 'Page Views',
+    credential_submit: 'Passwords Entered',
+    otp_submit: 'OTPs Entered',
+    exe_run: 'EXE Launched'
+  };
+
+  async function refresh() {
+    try {
+      const res = await fetch('/api/stats');
+      const data = await res.json();
+      document.getElementById('total').textContent = data.totalEvents;
+
+      const cards = document.getElementById('cards');
+      cards.innerHTML = '';
+      Object.entries(data.stats).forEach(([campaign, counts]) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        let metricsHtml = '';
+        Object.entries(counts).forEach(([type, n]) => {
+          if (type === 'page_view' || n > 0 || ['credential_submit','otp_submit','exe_run'].includes(type)) {
+            const danger = type !== 'page_view' ? 'danger' : '';
+            metricsHtml += `<div class="metric ${danger}"><span>${TYPE_LABELS[type]}</span><b>${n}</b></div>`;
+          }
+        });
+        card.innerHTML = `<h2>${CAMPAIGN_LABELS[campaign] || campaign}</h2>${metricsHtml}`;
+        cards.appendChild(card);
+      });
+
+      const body = document.getElementById('recent-body');
+      body.innerHTML = data.recent.map(e => `
+        <tr>
+          <td>${new Date(e.timestamp).toLocaleString()}</td>
+          <td>${CAMPAIGN_LABELS[e.campaign] || e.campaign}</td>
+          <td><span class="tag ${e.type}">${TYPE_LABELS[e.type] || e.type}</span></td>
+          <td>${e.ip || '-'}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="4" style="color:#666;">No events yet</td></tr>';
+    } catch (e) {
+      console.error('Failed to refresh', e);
+    }
+  }
+
+  refresh();
+  setInterval(refresh, 4000);
+</script>
+</body>
+</html>

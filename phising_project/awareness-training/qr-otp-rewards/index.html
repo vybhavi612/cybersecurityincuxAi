@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Claim Your Reward</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+
+    .gift-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      display: block;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    h1 {
+      color: #fff;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    p.sub {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      margin-bottom: 36px;
+    }
+
+    .otp-label {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .otp-boxes {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .otp-boxes input {
+      width: 52px;
+      height: 60px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      caret-color: #e94560;
+    }
+
+    .otp-boxes input:focus {
+      border-color: #e94560;
+      background: rgba(233,69,96,0.1);
+    }
+
+    .otp-boxes input.error {
+      border-color: #ff4d4d;
+      animation: shake 0.3s;
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #e94560, #c62a47);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .error-msg {
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      margin-top: 14px;
+      min-height: 20px;
+    }
+
+    /* Success state */
+    .success {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .success-icon {
+      font-size: 72px;
+      margin-bottom: 16px;
+      animation: pop 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .success h2 {
+      color: #fff;
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+
+    .success p {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+    }
+
+    .confetti-wrap {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .dot {
+      position: absolute;
+      top: -10px;
+      border-radius: 50%;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="confetti-wrap" id="confetti"></div>
+
+<div class="card">
+
+  <!-- OTP Form -->
+  <div id="form-view">
+    <span class="gift-icon">🎁</span>
+    <h1>Claim Your Reward</h1>
+    <p class="sub">Enter the 6-digit OTP to unlock your prize</p>
+
+    <span class="otp-label">Enter OTP</span>
+    <div class="otp-boxes" id="otp-boxes">
+      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+    </div>
+
+    <button class="btn" id="claim-btn">Claim Reward</button>
+    <p class="error-msg" id="error-msg"></p>
+  </div>
+
+  <!-- Awareness View -->
+  <div class="success" id="success-view">
+    <div class="success-icon">⚠️</div>
+    <h2>This was a phishing simulation</h2>
+    <p>You just entered an OTP code on a page reached through a scanned QR code — for security awareness training. No data was saved.</p>
+    <p style="margin-top:14px;">Real OTPs should never be entered on a page you reached by scanning an unknown QR code. Always verify the source first.</p>
+  </div>
+
+</div>
+
+<script>
+  const TRACKER_URL = 'https://phish-awareness-ayush.onrender.com/api/event';
+  function logEvent(type) {
+    fetch(TRACKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ campaign: 'qr-otp', type })
+    }).catch(() => {});
+  }
+  logEvent('page_view');
+
+  const inputs = document.querySelectorAll('#otp-boxes input');
+  const errorMsg = document.getElementById('error-msg');
+
+  // Auto-advance + backspace
+  inputs.forEach((inp, i) => {
+    inp.addEventListener('input', () => {
+      inp.value = inp.value.replace(/\D/g, '').slice(-1);
+      if (inp.value && i < inputs.length - 1) inputs[i + 1].focus();
+    });
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i - 1].focus();
+    });
+    inp.addEventListener('paste', e => {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+      paste.split('').forEach((ch, j) => { if (inputs[j]) inputs[j].value = ch; });
+      if (inputs[paste.length - 1]) inputs[paste.length - 1].focus();
+    });
+  });
+
+  document.getElementById('claim-btn').addEventListener('click', () => {
+    const otp = [...inputs].map(i => i.value).join('');
+    if (otp.length < 6) {
+      errorMsg.textContent = 'Please enter all 6 digits.';
+      return;
+    }
+    logEvent('otp_submit');
+    document.getElementById('form-view').style.display = 'none';
+    const sv = document.getElementById('success-view');
+    sv.style.display = 'flex';
+  });
+
+</script>
+</body>
+</html>

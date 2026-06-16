@@ -1,0 +1,12 @@
+beautifulsoup4>=4.12
+Flask>=3.0
+googlesearch-python>=1.2
+numpy>=1.26
+pandas>=2.2
+python-dateutil>=2.9
+requests>=2.31
+scikit-learn>=1.4
+xgboost>=2.0
+whois>=0.9.27
+joblib>=1.4
+lxml>=5.0

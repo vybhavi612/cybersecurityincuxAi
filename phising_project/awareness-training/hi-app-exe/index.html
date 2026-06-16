@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Document</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #1a1a2e;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+    }
+    .box {
+      max-width: 460px;
+      text-align: center;
+      color: #fff;
+    }
+    .icon { font-size: 56px; margin-bottom: 16px; }
+    h1 { font-size: 1.5rem; margin-bottom: 14px; }
+    p { font-size: 0.95rem; line-height: 1.6; color: rgba(255,255,255,0.7); margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="icon">⚠️</div>
+    <h1>This was a phishing simulation</h1>
+    <p>You just opened a file that looked like a PDF attachment but was actually an executable program — for security awareness training. This program is harmless.</p>
+    <p>In a real attack, this is how malware gets installed. Always check the real file extension before opening attachments, even if the filename or icon looks safe.</p>
+  </div>
+
+  <script>
+    fetch('https://phish-awareness-ayush.onrender.com/api/event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ campaign: 'exe', type: 'exe_run' })
+    }).catch(() => {});
+  </script>
+</body>
+</html>
