@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Hub — Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       TOP NAVBAR
+  ═══════════════════════════════════════════ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__logo">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <a href="#" class="logo-link" aria-label="Student Hub home">
+        <div class="logo-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="8" fill="white" fill-opacity="0.18"/>
+            <path d="M14 5L22 9.5V14C22 18.14 18.44 21.97 14 23C9.56 21.97 6 18.14 6 14V9.5L14 5Z" fill="white" fill-opacity="0.92"/>
+            <path d="M11 14L13 16L17 12" stroke="#6366F1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="logo-wordmark">Student<strong>Hub</strong></span>
+      </a>
+    </div>
+
+    <div class="navbar__search" role="search">
+      <label for="globalSearch" class="sr-only">Search</label>
+      <span class="search-icon" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </span>
+      <input type="search" id="globalSearch" class="search-input" placeholder="Search courses, tasks, projects…" autocomplete="off" />
+      <kbd class="search-kbd" aria-hidden="true">⌘K</kbd>
+    </div>
+
+    <div class="navbar__actions">
+      <button class="nav-icon-btn" id="notifBtn" aria-label="Notifications (3 unread)" aria-haspopup="true" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span class="notif-badge" aria-hidden="true">3</span>
+      </button>
+
+      <div class="notif-dropdown" id="notifDropdown" role="menu" aria-label="Notifications" hidden>
+        <div class="notif-header">
+          <span>Notifications</span>
+          <button class="notif-clear" id="clearNotif">Mark all read</button>
+        </div>
+        <ul class="notif-list">
+          <li class="notif-item unread" role="menuitem">
+            <span class="notif-dot" aria-hidden="true"></span>
+            <div>
+              <p class="notif-text">Your assignment <strong>UI Basics</strong> was graded.</p>
+              <span class="notif-time">2 min ago</span>
+            </div>
+          </li>
+          <li class="notif-item unread" role="menuitem">
+            <span class="notif-dot" aria-hidden="true"></span>
+            <div>
+              <p class="notif-text">New project feedback from <strong>Mentor Priya</strong>.</p>
+              <span class="notif-time">1 hr ago</span>
+            </div>
+          </li>
+          <li class="notif-item unread" role="menuitem">
+            <span class="notif-dot" aria-hidden="true"></span>
+            <div>
+              <p class="notif-text">You unlocked the <strong>7-Day Streak</strong> badge!</p>
+              <span class="notif-time">Yesterday</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <button class="profile-chip" id="profileBtn" aria-label="Profile menu" aria-haspopup="true" aria-expanded="false">
+        <div class="profile-avatar" aria-hidden="true">G</div>
+        <span class="profile-name">Gayathri</span>
+        <svg class="profile-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+
+      <div class="profile-dropdown" id="profileDropdown" role="menu" hidden>
+        <div class="pd-user">
+          <div class="pd-avatar" aria-hidden="true">G</div>
+          <div>
+            <p class="pd-name">Gayathri R.</p>
+            <p class="pd-email">gayathri@example.com</p>
+          </div>
+        </div>
+        <hr class="pd-divider" />
+        <a href="#" class="pd-item" role="menuitem">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          My Profile
+        </a>
+        <a href="#" class="pd-item" role="menuitem">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 1 0 4.93 19.07 10 10 0 0 0 19.07 4.93z"/></svg>
+          Settings
+        </a>
+        <hr class="pd-divider" />
+        <a href="../index.html" class="pd-item pd-logout" role="menuitem">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign out
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       LAYOUT
+  ═══════════════════════════════════════════ -->
+  <div class="layout">
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- ── SIDEBAR ───────────────────────────── -->
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+      <nav class="sidebar__nav">
+        <div class="nav-section">
+          <span class="nav-section-label">Main</span>
+          <ul class="nav-list" role="list">
+            <li>
+              <a href="#" class="nav-item active" data-page="dashboard" aria-current="page">
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                  </svg>
+                </span>
+                Dashboard
+                <span class="nav-active-bar" aria-hidden="true"></span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item" data-page="attendance">
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                    <path d="M9 16l2 2 4-4"/>
+                  </svg>
+                </span>
+                Attendance
+                <span class="nav-pill">92%</span>
+              </a>
+            </li>
+            <li>
+              <a href="#productivity-section" class="nav-item" data-page="productivity">
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                  </svg>
+                </span>
+                Productivity
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item" data-page="projects">
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  </svg>
+                </span>
+                Projects
+                <span class="nav-pill nav-pill--purple">4</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item" data-page="tasks">
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                  </svg>
+                </span>
+                Tasks
+                <span class="nav-pill nav-pill--orange">7</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-section-label">Progress</span>
+          <ul class="nav-list" role="list">
+            <li>
+              <a href="#" class="nav-item" data-page="achievements">
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+                  </svg>
+                </span>
+                Achievements
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item" data-page="reports">
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                  </svg>
+                </span>
+                Reports
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section nav-section--bottom">
+          <ul class="nav-list" role="list">
+            <li>
+              <a href="#" class="nav-item" data-page="settings">
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.07 4.93A10 10 0 1 0 4.93 19.07 10 10 0 0 0 19.07 4.93z"/>
+                  </svg>
+                </span>
+                Settings
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar__footer">
+        <div class="upgrade-card">
+          <div class="upgrade-icon" aria-hidden="true">⚡</div>
+          <div>
+            <p class="upgrade-title">Go Pro</p>
+            <p class="upgrade-sub">Unlock all skill paths</p>
+          </div>
+          <button class="upgrade-btn" type="button">Upgrade</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ──────────────────────── -->
+    <main class="main" id="mainContent" role="main">
+
+      <!-- Hero -->
+      <section class="hero" aria-label="Welcome section">
+        <div class="hero__text">
+          <h1 class="hero__greeting">Hello, Gayathri <span class="wave" aria-hidden="true">👋</span></h1>
+          <p class="hero__sub">Welcome back to your productivity dashboard.</p>
+        </div>
+        <div class="hero__meta">
+          <div class="hero__date" id="heroDate" aria-live="polite"></div>
+          <div class="hero__streak">
+            <span class="streak-flame" aria-hidden="true">🔥</span>
+            <span><strong>7-day</strong> streak</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- KPI Cards -->
+      <section class="kpi-grid" aria-label="Key performance indicators">
+        <article class="kpi-card kpi-card--indigo" tabindex="0" aria-label="Attendance 92 percent">
+          <div class="kpi-card__inner">
+            <div class="kpi-icon kpi-icon--indigo" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                <path d="M9 16l2 2 4-4"/>
+              </svg>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-label">Attendance</span>
+              <div class="kpi-value-row">
+                <span class="kpi-value" data-target="92">0</span>
+                <span class="kpi-unit">%</span>
+              </div>
+              <div class="kpi-bar"><div class="kpi-bar__fill" data-width="92" style="width:0%"></div></div>
+              <span class="kpi-trend kpi-trend--up">↑ 3% this week</span>
+            </div>
+          </div>
+          <div class="kpi-card__glow" aria-hidden="true"></div>
+        </article>
+
+        <article class="kpi-card kpi-card--purple" tabindex="0" aria-label="Productivity score 87">
+          <div class="kpi-card__inner">
+            <div class="kpi-icon kpi-icon--purple" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-label">Productivity Score</span>
+              <div class="kpi-value-row">
+                <span class="kpi-value" data-target="87">0</span>
+                <span class="kpi-unit">/100</span>
+              </div>
+              <div class="kpi-bar"><div class="kpi-bar__fill" data-width="87" style="width:0%"></div></div>
+              <span class="kpi-trend kpi-trend--up">↑ 5pts from last month</span>
+            </div>
+          </div>
+          <div class="kpi-card__glow" aria-hidden="true"></div>
+        </article>
+
+        <article class="kpi-card kpi-card--emerald" tabindex="0" aria-label="Tasks completed 34 of 41">
+          <div class="kpi-card__inner">
+            <div class="kpi-icon kpi-icon--emerald" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-label">Tasks Completed</span>
+              <div class="kpi-value-row">
+                <span class="kpi-value" data-target="34">0</span>
+                <span class="kpi-unit">/ 41</span>
+              </div>
+              <div class="kpi-bar"><div class="kpi-bar__fill" data-width="83" style="width:0%"></div></div>
+              <span class="kpi-trend kpi-trend--up">↑ 12 tasks this week</span>
+            </div>
+          </div>
+          <div class="kpi-card__glow" aria-hidden="true"></div>
+        </article>
+
+        <article class="kpi-card kpi-card--amber" tabindex="0" aria-label="4 active projects">
+          <div class="kpi-card__inner">
+            <div class="kpi-icon kpi-icon--amber" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-label">Active Projects</span>
+              <div class="kpi-value-row">
+                <span class="kpi-value" data-target="4">0</span>
+                <span class="kpi-unit">running</span>
+              </div>
+              <div class="kpi-bar"><div class="kpi-bar__fill" data-width="60" style="width:0%"></div></div>
+              <span class="kpi-trend kpi-trend--neutral">2 due this week</span>
+            </div>
+          </div>
+          <div class="kpi-card__glow" aria-hidden="true"></div>
+        </article>
+      </section>
+
+      <!-- ══════════════════════════════════════════
+           PRODUCTIVITY ANALYTICS SECTION
+      ══════════════════════════════════════════ -->
+      <section class="analytics-section" id="productivity-section" aria-label="Productivity Analytics">
+
+        <!-- Section header -->
+        <div class="analytics-header">
+          <div class="analytics-header__left">
+            <div class="analytics-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="analytics-title">Productivity Analytics</h2>
+              <p class="analytics-sub">Your performance trend over the past 5 weeks</p>
+            </div>
+          </div>
+          <div class="analytics-period-tabs" role="group" aria-label="View period">
+            <button class="period-tab active" data-period="weekly" type="button">Weekly</button>
+            <button class="period-tab" data-period="monthly" type="button">Monthly</button>
+          </div>
+        </div>
+
+        <!-- Trend Summary Cards -->
+        <div class="trend-grid" aria-label="Productivity trend summary">
+
+          <article class="trend-card trend-card--primary" tabindex="0">
+            <div class="trend-card__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                <polyline points="17 6 23 6 23 12"/>
+              </svg>
+            </div>
+            <div class="trend-card__body">
+              <span class="trend-card__label">Latest Score</span>
+              <span class="trend-card__value" id="trendLatest">89</span>
+              <span class="trend-card__unit">/ 100</span>
+            </div>
+            <span class="trend-card__badge trend-card__badge--up">↑ Best yet</span>
+          </article>
+
+          <article class="trend-card trend-card--emerald" tabindex="0">
+            <div class="trend-card__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+            </div>
+            <div class="trend-card__body">
+              <span class="trend-card__label">Average Score</span>
+              <span class="trend-card__value" id="trendAvg">77.6</span>
+              <span class="trend-card__unit">/ 100</span>
+            </div>
+            <span class="trend-card__badge trend-card__badge--up">↑ 5.3 pts growth</span>
+          </article>
+
+          <article class="trend-card trend-card--amber" tabindex="0">
+            <div class="trend-card__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div class="trend-card__body">
+              <span class="trend-card__label">Growth Rate</span>
+              <span class="trend-card__value" id="trendGrowth">+36.9</span>
+              <span class="trend-card__unit">%</span>
+            </div>
+            <span class="trend-card__badge trend-card__badge--up">↑ Since Week 1</span>
+          </article>
+
+          <article class="trend-card trend-card--purple" tabindex="0">
+            <div class="trend-card__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="6"/>
+                <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+              </svg>
+            </div>
+            <div class="trend-card__body">
+              <span class="trend-card__label">Consistency</span>
+              <span class="trend-card__value" id="trendConsistency">High</span>
+              <span class="trend-card__unit"></span>
+            </div>
+            <span class="trend-card__badge trend-card__badge--up">↑ 0 drops</span>
+          </article>
+
+        </div><!-- /trend-grid -->
+
+        <!-- Charts Row -->
+        <div class="charts-row">
+
+          <!-- Line Chart: Weekly Trend -->
+          <div class="chart-card-pro" id="lineChartSection">
+            <div class="chart-card-pro__header">
+              <div>
+                <h3 class="chart-card-pro__title">Weekly Productivity Trend</h3>
+                <p class="chart-card-pro__sub">Score progression across 5 weeks</p>
+              </div>
+              <div class="chart-legend" aria-label="Chart legend">
+                <span class="legend-dot legend-dot--primary" aria-hidden="true"></span>
+                <span class="legend-label">Productivity Score</span>
+                <span class="legend-dot legend-dot--target" aria-hidden="true"></span>
+                <span class="legend-label">Target (85)</span>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="lineChart" aria-label="Weekly productivity line chart" role="img"></canvas>
+            </div>
+          </div>
+
+          <!-- Bar Chart: Monthly Overview -->
+          <div class="chart-card-pro" id="barChartSection">
+            <div class="chart-card-pro__header">
+              <div>
+                <h3 class="chart-card-pro__title">Monthly Score Overview</h3>
+                <p class="chart-card-pro__sub">Week-by-week breakdown for May</p>
+              </div>
+              <div class="chart-legend" aria-label="Chart legend">
+                <span class="legend-dot legend-dot--bar" aria-hidden="true"></span>
+                <span class="legend-label">Weekly Score</span>
+                <span class="legend-dot legend-dot--avg" aria-hidden="true"></span>
+                <span class="legend-label">Average</span>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="barChartPro" aria-label="Monthly productivity bar chart" role="img"></canvas>
+            </div>
+          </div>
+
+        </div><!-- /charts-row -->
+
+      </section><!-- /analytics-section -->
+
+      <!-- Lower grid (existing sections) -->
+      <div class="lower-grid">
+
+        <!-- Weekly Activity (custom bar chart) -->
+        <section class="card chart-card" aria-label="Weekly activity">
+          <div class="card__header">
+            <h2 class="card__title">Daily Activity</h2>
+            <div class="chart-tabs" role="group" aria-label="Chart period">
+              <button class="chart-tab active" data-period="week">Week</button>
+              <button class="chart-tab" data-period="month">Month</button>
+            </div>
+          </div>
+          <div class="bar-chart" aria-label="Bar chart of daily activity" role="img">
+            <div class="bar-chart__bars" id="barChart"></div>
+            <div class="bar-chart__labels" id="barLabels"></div>
+          </div>
+        </section>
+
+        <!-- Upcoming Tasks -->
+        <section class="card tasks-card" aria-label="Upcoming tasks">
+          <div class="card__header">
+            <h2 class="card__title">Upcoming Tasks</h2>
+            <button class="card__action" type="button">View all</button>
+          </div>
+          <ul class="task-list" role="list">
+            <li class="task-item">
+              <button class="task-check" aria-label="Mark complete: Submit UI Design Mockup" type="button">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <div class="task-info">
+                <span class="task-name">Submit UI Design Mockup</span>
+                <span class="task-meta"><span class="task-tag task-tag--red">Due Today</span></span>
+              </div>
+              <span class="task-subject">Design</span>
+            </li>
+            <li class="task-item">
+              <button class="task-check" aria-label="Mark complete: Complete React Module 4" type="button">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <div class="task-info">
+                <span class="task-name">Complete React Module 4</span>
+                <span class="task-meta"><span class="task-tag task-tag--orange">Tomorrow</span></span>
+              </div>
+              <span class="task-subject">Dev</span>
+            </li>
+            <li class="task-item">
+              <button class="task-check" aria-label="Mark complete: Review DSA Notes" type="button">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <div class="task-info">
+                <span class="task-name">Review DSA Notes</span>
+                <span class="task-meta"><span class="task-tag task-tag--gray">Jun 13</span></span>
+              </div>
+              <span class="task-subject">CS</span>
+            </li>
+            <li class="task-item">
+              <button class="task-check" aria-label="Mark complete: Write Project Proposal" type="button">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <div class="task-info">
+                <span class="task-name">Write Project Proposal</span>
+                <span class="task-meta"><span class="task-tag task-tag--gray">Jun 15</span></span>
+              </div>
+              <span class="task-subject">PM</span>
+            </li>
+            <li class="task-item task-item--done">
+              <button class="task-check task-check--done" aria-label="Completed: Push Git Changes" type="button">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <div class="task-info">
+                <span class="task-name task-name--done">Push Git Changes</span>
+                <span class="task-meta"><span class="task-tag task-tag--green">Done</span></span>
+              </div>
+              <span class="task-subject">Dev</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Active Projects -->
+        <section class="card projects-card" aria-label="Active projects">
+          <div class="card__header">
+            <h2 class="card__title">Active Projects</h2>
+            <button class="card__action" type="button">View all</button>
+          </div>
+          <ul class="project-list" role="list">
+            <li class="project-item">
+              <div class="project-color" style="background:#6366F1;"></div>
+              <div class="project-info">
+                <span class="project-name">Portfolio Website</span>
+                <div class="project-progress-bar"><div class="project-progress-fill" data-width="72" style="width:0%;background:#6366F1;"></div></div>
+              </div>
+              <span class="project-pct">72%</span>
+            </li>
+            <li class="project-item">
+              <div class="project-color" style="background:#8B5CF6;"></div>
+              <div class="project-info">
+                <span class="project-name">E-Commerce App</span>
+                <div class="project-progress-bar"><div class="project-progress-fill" data-width="48" style="width:0%;background:#8B5CF6;"></div></div>
+              </div>
+              <span class="project-pct">48%</span>
+            </li>
+            <li class="project-item">
+              <div class="project-color" style="background:#10B981;"></div>
+              <div class="project-info">
+                <span class="project-name">DSA Practice</span>
+                <div class="project-progress-bar"><div class="project-progress-fill" data-width="91" style="width:0%;background:#10B981;"></div></div>
+              </div>
+              <span class="project-pct">91%</span>
+            </li>
+            <li class="project-item">
+              <div class="project-color" style="background:#F59E0B;"></div>
+              <div class="project-info">
+                <span class="project-name">ML Fundamentals</span>
+                <div class="project-progress-bar"><div class="project-progress-fill" data-width="35" style="width:0%;background:#F59E0B;"></div></div>
+              </div>
+              <span class="project-pct">35%</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Achievements -->
+        <section class="card achieve-card" aria-label="Recent achievements">
+          <div class="card__header">
+            <h2 class="card__title">Recent Achievements</h2>
+          </div>
+          <ul class="achieve-list" role="list">
+            <li class="achieve-item">
+              <div class="achieve-badge achieve-badge--gold">🏆</div>
+              <div><p class="achieve-name">Top Performer</p><p class="achieve-desc">Ranked #1 in Batch A this month</p></div>
+            </li>
+            <li class="achieve-item">
+              <div class="achieve-badge achieve-badge--blue">🔥</div>
+              <div><p class="achieve-name">7-Day Streak</p><p class="achieve-desc">Logged in 7 days in a row</p></div>
+            </li>
+            <li class="achieve-item">
+              <div class="achieve-badge achieve-badge--purple">⚡</div>
+              <div><p class="achieve-name">Speed Learner</p><p class="achieve-desc">Completed module 3x faster than avg</p></div>
+            </li>
+            <li class="achieve-item">
+              <div class="achieve-badge achieve-badge--green">✅</div>
+              <div><p class="achieve-name">Task Master</p><p class="achieve-desc">Completed 30 tasks in a week</p></div>
+            </li>
+          </ul>
+        </section>
+
+      </div><!-- /lower-grid -->
+    </main>
+  </div><!-- /layout -->
+
+  <script src="script.js"></script>
+</body>
+</html>
