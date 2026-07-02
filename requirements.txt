@@ -1,0 +1,11 @@
+streamlit
+pandas
+numpy
+plotly
+bcrypt
+reportlab
+Pillow
+requests
+psutil
+fpdf
+matplotlib
