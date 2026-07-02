@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishGuard AI — Phishing URL Detector</title>
+  <meta name="description" content="Detect phishing URLs instantly with PhishGuard AI. Advanced cybersecurity analysis for suspicious links." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+</head>
+<body>
+
+  <!-- ── Animated Background Grid ───────────────────────────── -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- ── Top Navigation ─────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo" aria-label="PhishGuard AI Home">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">PhishGuard <span class="logo-accent">AI</span></span>
+      </a>
+      <nav class="header-nav" role="navigation" aria-label="Main navigation">
+        <button class="nav-btn active" data-view="scanner" aria-current="page">Scanner</button>
+        <button class="nav-btn" data-view="history">History</button>
+        <button class="nav-btn" data-view="stats">Stats</button>
+        <button class="nav-btn" data-view="tips">Tips</button>
+      </nav>
+      <div class="header-badge">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span>Live</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main Content ───────────────────────────────────────── -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- VIEW: Scanner ──────────────────────────────────────── -->
+      <section id="view-scanner" class="view active" aria-label="URL Scanner">
+
+        <!-- Hero -->
+        <div class="hero">
+          <div class="hero-label">Threat Intelligence Engine</div>
+          <h1 class="hero-title">
+            <span class="hero-line1">Detect Phishing</span>
+            <span class="hero-line2">Before You <span class="text-accent">Click</span></span>
+          </h1>
+          <p class="hero-sub">Paste any URL to run 8 automated security checks and receive an instant risk assessment.</p>
+        </div>
+
+        <!-- Scanner Input -->
+        <div class="scanner-card">
+          <div class="scanner-card-header">
+            <span class="card-tag">URL Analysis</span>
+            <span class="card-tag card-tag--mono">v1.0</span>
+          </div>
+          <div class="input-group">
+            <div class="input-icon" aria-hidden="true">⬡</div>
+            <input
+              type="url"
+              id="url-input"
+              class="url-input"
+              placeholder="https://example.com/page?ref=123"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="none"
+              spellcheck="false"
+              aria-label="Enter URL to analyze"
+            />
+            <button id="analyze-btn" class="analyze-btn" aria-label="Analyze URL">
+              <span class="btn-text">Analyze</span>
+              <span class="btn-icon" aria-hidden="true">→</span>
+            </button>
+          </div>
+          <div class="input-meta">
+            <span class="input-hint">Supports HTTP/HTTPS URLs up to 2000 characters</span>
+            <button class="sample-toggle" id="sample-toggle" aria-expanded="false">Try a sample ↓</button>
+          </div>
+
+          <!-- Sample URLs Dropdown -->
+          <div class="samples-panel" id="samples-panel" aria-hidden="true" role="listbox" aria-label="Sample URLs">
+            <div class="samples-grid" id="samples-grid">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-overlay" id="loading-overlay" aria-live="polite" aria-label="Analyzing URL" hidden>
+          <div class="loading-inner">
+            <div class="loading-hex" aria-hidden="true">
+              <div class="hex-ring hex-ring--1"></div>
+              <div class="hex-ring hex-ring--2"></div>
+              <div class="hex-ring hex-ring--3"></div>
+              <span class="hex-icon">⬡</span>
+            </div>
+            <p class="loading-text" id="loading-text">Initializing scan...</p>
+            <div class="loading-bar-track" aria-hidden="true">
+              <div class="loading-bar-fill" id="loading-bar"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Dashboard -->
+        <div class="results-section" id="results-section" aria-live="polite" hidden>
+
+          <!-- Risk Meter + Classification -->
+          <div class="results-header-row">
+            <div class="risk-card" id="risk-card">
+              <div class="risk-card-label">Risk Score</div>
+              <div class="risk-meter-wrap" role="img" aria-label="Risk meter">
+                <svg class="risk-meter-svg" viewBox="0 0 200 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <!-- Background arc -->
+                  <path class="meter-track" d="M 20 100 A 80 80 0 0 1 180 100" />
+                  <!-- Score arc (filled via JS) -->
+                  <path class="meter-fill" id="meter-fill" d="M 20 100 A 80 80 0 0 1 180 100" />
+                  <!-- Needle -->
+                  <line class="meter-needle" id="meter-needle" x1="100" y1="100" x2="100" y2="28" />
+                  <circle class="meter-pivot" cx="100" cy="100" r="5" />
+                  <!-- Labels -->
+                  <text class="meter-label" x="14" y="116">0</text>
+                  <text class="meter-label meter-label--mid" x="96" y="16">50</text>
+                  <text class="meter-label meter-label--right" x="176" y="116">100</text>
+                </svg>
+                <div class="meter-score" id="meter-score">0</div>
+              </div>
+              <div class="risk-badge" id="risk-badge">—</div>
+            </div>
+
+            <div class="result-meta-card">
+              <div class="result-url-label">URL Analyzed</div>
+              <div class="result-url-value" id="result-url">—</div>
+              <div class="result-domain-label">Domain</div>
+              <div class="result-domain-value" id="result-domain">—</div>
+              <div class="result-time-label">Scanned at</div>
+              <div class="result-time-value" id="result-time">—</div>
+              <div class="result-summary-row" id="result-summary-row">
+                <div class="summary-pill summary-pill--pass" id="summary-pass">— Passed</div>
+                <div class="summary-pill summary-pill--fail" id="summary-fail">— Failed</div>
+                <div class="summary-pill summary-pill--pending" id="summary-pending">— Pending</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Individual Checks -->
+          <div class="checks-section">
+            <h2 class="section-title">Security Checks</h2>
+            <div class="checks-grid" id="checks-grid">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+
+          <!-- Recommendations -->
+          <div class="recommendations-section" id="recommendations-section">
+            <h2 class="section-title">Recommendations</h2>
+            <ul class="recommendations-list" id="recommendations-list">
+              <!-- Populated via JS -->
+            </ul>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="results-actions">
+            <button class="action-btn action-btn--primary" id="download-btn" aria-label="Download PDF Report">
+              ↓ Download Report
+            </button>
+            <button class="action-btn" id="new-scan-btn" aria-label="Start New Scan">
+              ⟳ New Scan
+            </button>
+            <button class="action-btn" id="copy-result-btn" aria-label="Copy Result to Clipboard">
+              ⊞ Copy Result
+            </button>
+          </div>
+
+        </div>
+        <!-- /results-section -->
+
+      </section>
+      <!-- /view-scanner -->
+
+
+      <!-- VIEW: History ──────────────────────────────────────── -->
+      <section id="view-history" class="view" aria-label="Scan History" hidden>
+        <div class="view-header">
+          <h1 class="view-title">Scan History</h1>
+          <p class="view-sub">Previously analyzed URLs are stored locally in your browser.</p>
+          <button class="action-btn action-btn--danger" id="clear-history-btn">✕ Clear History</button>
+        </div>
+        <div id="history-empty" class="empty-state" hidden>
+          <div class="empty-icon">⬡</div>
+          <p>No scans yet. Analyze a URL to see your history here.</p>
+        </div>
+        <div class="history-list" id="history-list">
+          <!-- Populated via JS -->
+        </div>
+      </section>
+
+      <!-- VIEW: Stats ────────────────────────────────────────── -->
+      <section id="view-stats" class="view" aria-label="Statistics" hidden>
+        <div class="view-header">
+          <h1 class="view-title">Statistics</h1>
+          <p class="view-sub">Aggregated data from your local scan history.</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">⬡</div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Total Scanned</div>
+          </div>
+          <div class="stat-card stat-card--safe">
+            <div class="stat-icon">✓</div>
+            <div class="stat-value" id="stat-safe">0</div>
+            <div class="stat-label">Safe URLs</div>
+          </div>
+          <div class="stat-card stat-card--suspicious">
+            <div class="stat-icon">⚠</div>
+            <div class="stat-value" id="stat-suspicious">0</div>
+            <div class="stat-label">Suspicious URLs</div>
+          </div>
+          <div class="stat-card stat-card--high-risk">
+            <div class="stat-icon">⬡</div>
+            <div class="stat-value" id="stat-high-risk">0</div>
+            <div class="stat-label">High Risk URLs</div>
+          </div>
+        </div>
+        <div class="stats-chart-section">
+          <h2 class="section-title">Distribution</h2>
+          <div class="distribution-bar-wrap">
+            <div class="distribution-bar" id="distribution-bar">
+              <div class="dist-segment dist-segment--safe" id="dist-safe" style="width:0%">
+                <span class="dist-label">Safe</span>
+              </div>
+              <div class="dist-segment dist-segment--suspicious" id="dist-suspicious" style="width:0%">
+                <span class="dist-label">Suspicious</span>
+              </div>
+              <div class="dist-segment dist-segment--high-risk" id="dist-high-risk" style="width:0%">
+                <span class="dist-label">High Risk</span>
+              </div>
+            </div>
+          </div>
+          <div id="stats-empty" class="empty-state">
+            <div class="empty-icon">⬡</div>
+            <p>Scan some URLs to generate statistics.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW: Tips ─────────────────────────────────────────── -->
+      <section id="view-tips" class="view" aria-label="Cybersecurity Tips" hidden>
+        <div class="view-header">
+          <h1 class="view-title">Phishing Prevention Tips</h1>
+          <p class="view-sub">Stay ahead of attackers with these proven security practices.</p>
+        </div>
+        <div class="tips-grid">
+          <div class="tip-card">
+            <div class="tip-number">01</div>
+            <h3 class="tip-title">Verify the Domain</h3>
+            <p class="tip-body">Always check the root domain, not just the subdomain. <code>paypal.secure-verify.com</code> is owned by <code>secure-verify.com</code>, not PayPal.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-number">02</div>
+            <h3 class="tip-title">Check for HTTPS</h3>
+            <p class="tip-body">Legitimate sites use HTTPS. However, HTTPS alone doesn't guarantee safety — phishing sites can also use SSL certificates.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-number">03</div>
+            <h3 class="tip-title">Expand Shortened URLs</h3>
+            <p class="tip-body">Before clicking a bit.ly or t.co link, preview the destination using a URL expander service such as checkshorturl.com.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-number">04</div>
+            <h3 class="tip-title">Look for Lookalike Domains</h3>
+            <p class="tip-body">Attackers use domains like <code>paypa1.com</code> (with a 1 instead of l) or <code>аmаzon.com</code> using Cyrillic characters.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-number">05</div>
+            <h3 class="tip-title">Never Enter Credentials via Email Links</h3>
+            <p class="tip-body">Navigate directly to websites by typing the address manually. Never click login links in unsolicited emails or messages.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-number">06</div>
+            <h3 class="tip-title">Enable Multi-Factor Authentication</h3>
+            <p class="tip-body">MFA prevents attackers from accessing your account even if they obtain your password through a phishing attack.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-number">07</div>
+            <h3 class="tip-title">Use a Password Manager</h3>
+            <p class="tip-body">Password managers only auto-fill credentials on the correct domain, giving you a built-in phishing protection layer.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-number">08</div>
+            <h3 class="tip-title">Keep Software Updated</h3>
+            <p class="tip-body">Browser and OS updates include security patches that protect against known phishing techniques and malware delivery methods.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-number">09</div>
+            <h3 class="tip-title">Report Phishing Attempts</h3>
+            <p class="tip-body">Report phishing emails to <code>reportphishing@apwg.org</code> and suspicious URLs to <a href="https://safebrowsing.google.com/safebrowsing/report_phish/" target="_blank" rel="noopener">Google Safe Browsing</a>.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+    <!-- /container -->
+  </main>
+
+  <!-- ── Toast Notification ─────────────────────────────────── -->
+  <div class="toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true" hidden></div>
+
+  <!-- ── Footer ─────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">⬡ PhishGuard AI</span>
+      <span class="footer-note">For educational purposes. Always verify URLs with multiple sources.</span>
+      <span class="footer-version">v1.0.0</span>
+    </div>
+  </footer>
+
+  <!-- ── Scripts ────────────────────────────────────────────── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
