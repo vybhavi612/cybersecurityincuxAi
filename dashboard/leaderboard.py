@@ -1,4 +1,0 @@
-"""
-leaderboard.py
-"""
-
