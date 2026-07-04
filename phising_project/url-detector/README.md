@@ -1,92 +1,67 @@
-#
-Phishing URL Detection
-###
-This project is designed for the detection of phishing URLs using a machine learning model based on features extracted from the URLs. The model is implemented using a Gradient Boosting Classifier.
+# Phishing URL Detection - Hybrid ML/DL Pipeline
 
-##
-Project Overview
+Classifies URLs as phishing or legitimate using a **hybrid ensemble** of two
+complementary models, stacked with a logistic-regression meta-learner, plus a
+trusted-domain allowlist safeguard. Held-out test accuracy: **99.3%** (ROC-AUC
+0.9996) on 185k live URLs.
 
-The project consists of the following components:
+## Architecture
 
-###
-Feature Extraction:
+```
+URL ──┬─► lexical_features.py (32 hand-engineered features) ──► XGBoost ──┐
+      │                                                                    ├─► Logistic-regression ──► verdict
+      └─► char_model.py (raw character sequence) ──► CharCNN (GPU) ───────┘        stacker
+                                                                                     │
+                                        trusted_domains.json allowlist ─────────────┘
+                                        (overrides false positives on well-known,
+                                         risk-marker-free domains)
+```
 
-The feature extraction module is responsible for gathering relevant features from a given URL. The FeatureExtraction class in the feature.py file implements various methods to extract features.
+- **Branch A - XGBoost over lexical/structural features** (`pipeline/lexical_features.py`):
+  32 features computed purely from the URL string (entropy, brand-typosquat
+  edit distance, suspicious TLDs/keywords, IP-host/punycode/shortener
+  detection, etc). No live HTTP fetch, WHOIS lookup, or third-party API call -
+  unlike the legacy `feature.py`, which depended on the (now-defunct) Alexa
+  rank API and checkpagerank.net, and on WHOIS/Google-search scraping that
+  gets rate-limited/blocked in production.
+- **Branch B - character-level CNN over the raw URL** (`pipeline/char_model.py`):
+  learns sub-word patterns (typosquat substitutions, unusual token structure)
+  that hand-crafted features can miss. Trains on GPU (CUDA) if available.
+- **Meta stacker**: logistic regression over out-of-fold probabilities from
+  both branches (`pipeline/train.py`), so the final score reflects whichever
+  branch is actually right for a given URL.
+- **Trusted-domain allowlist** (`pipeline/predict.py`): a top-50k global-domain
+  list overrides the ML verdict when a URL's *registered* domain (via
+  `tldextract`, not substring match) is on the list and shows no hard risk
+  markers (no raw-IP host, no punycode, no `@`, HTTPS). Standard practice in
+  production anti-phishing systems - closes false positives on legitimate
+  sites with unusual path conventions (e.g. code-hosting org/repo URLs) that
+  no amount of synthetic training-path diversity fully covers.
 
-###
-Gradient Boosting Model:
-The machine learning model is implemented using the Gradient Boosting Classifier. The training of the model is done in the GradientBoost.ipynb Jupyter Notebook.
+## Data
 
-###
-Prediction:
-The predict.py script allows users to input a URL and receive a prediction from the trained model regarding whether the URL is potentially phishing or not.
+`pipeline/build_dataset.py` builds `pipeline/data/urls_dataset.csv` from two
+live public feeds (no manual dataset curation, refreshable anytime):
 
-###
-Web Interface:
-The project includes a simple web interface for users to interact with the model. The interface is implemented using Flask and can be accessed by running the app.py script.
+- **Phishing**: [PhishTank](https://phishtank.org) verified-online feed.
+- **Legitimate**: [Cisco Umbrella Popularity List](https://s3-us-west-1.amazonaws.com/umbrella-static/index.html),
+  with synthetic-but-realistic paths/subdomains/query strings generated per
+  domain (not just the bare domain root) so path complexity isn't a spurious
+  phishing signal.
 
+## Usage
 
+```bash
+pip install -r requirements.txt
+python pipeline/build_dataset.py   # (re)build the dataset from live feeds
+python -m pipeline.train           # train all branches + meta stacker, ~5 min on GPU
+python app.py                      # Flask UI at http://127.0.0.1:5050
+```
 
-##
-Programming Language:
+`pipeline/predict.py` exposes `get_predictor().predict(url)` for programmatic use.
 
-###
-Python:
-The core programming language used for implementing the URL phishing detection.
-Libraries and Frameworks:
+## Legacy files
 
-###
-Scikit-learn:
- Used for machine learning tasks, particularly for implementing the Gradient Boosting model for URL phishing prediction.
-###
-BeautifulSoup:
-Used for web scraping and extracting information from HTML content.
-###
-Requests:
-Used for making HTTP requests to retrieve web pages.
-###
-Whois:
- Used for retrieving WHOIS information about domain registration.
-###
-Googlesearch:
- Used for performing Google searches programmatically.
-###
-ipaddress:
- Used for working with IP addresses.
-###
-Flask:
- A web framework used for building the web interface and handling HTTP requests.
-
-##
-Machine Learning Model:
-###
-Gradient Boosting Model: Trained and implemented using the Scikit-learn library for predicting whether a given URL is a phishing URL or not.
-Web Development:
-
-##
-Flask Web Framework:
-Used for building the web application that allows users to input a URL and get predictions.
-##
-Web Technologies:
-
-###
-HTML:
-Used for structuring the web page.
-###
-CSS:
- Used for styling the web page and applying colors based on phishing prediction results.
-###
-Jinja2:
-A templating engine used with Flask for embedding Python code in HTML.
-Data Analysis and Feature Extraction:
-
-###
-Pandas:
-While not explicitly mentioned in your provided code, Pandas is a common library for data manipulation and analysis in Python. If data frames are used for feature extraction or analysis, Pandas may be involved.
-###
-Other Utilities:
-
-###
-Regular Expressions (Regex):
-Used for pattern matching and extracting specific information from strings.
-Make sure to include these technologies and tools in your project's documentation or README file, providing information on how to set up and run the project. Additionally, mention any specific versions of the libraries and frameworks used.
+`feature.py`, `train_model.py`, `phishing_model.joblib` are the original
+single-model (RandomForest, 30-feature) implementation, kept for reference but
+no longer used by `app.py`.

@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 .google-cookie
 response.txt
+pipeline/data/
+pipeline/train_log.txt

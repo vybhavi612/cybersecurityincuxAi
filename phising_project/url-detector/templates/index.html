@@ -176,6 +176,10 @@
         <p class="no-risks">No major risk indicators detected.</p>
       {% endif %}
 
+      <div class="risk-title" style="margin-top:18px;">Branch scores</div>
+      <div class="risk-item"><span>XGBoost (lexical features)</span><span>{{ (result.branch_scores.xgb_lexical * 100) | round(1) }}%</span></div>
+      <div class="risk-item"><span>CharCNN (raw URL string)</span><span>{{ (result.branch_scores.charcnn_raw_url * 100) | round(1) }}%</span></div>
+
       <div class="model-tag">Model: {{ result.model_name }} · {{ (model_info.accuracy * 100) | round(1) }}% test accuracy</div>
     </div>
     {% endif %}

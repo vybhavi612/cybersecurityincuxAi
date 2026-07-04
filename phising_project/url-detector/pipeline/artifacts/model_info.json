@@ -1,0 +1,59 @@
+{
+  "architecture": "hybrid: XGBoost(lexical features) + CharCNN(raw URL) + logistic-regression stacker",
+  "feature_names": [
+    "url_length",
+    "hostname_length",
+    "path_length",
+    "query_length",
+    "num_dots",
+    "num_hyphens",
+    "num_underscores",
+    "num_slashes",
+    "num_digits",
+    "num_special_chars",
+    "digit_ratio",
+    "url_entropy",
+    "hostname_entropy",
+    "has_ip_host",
+    "has_at_symbol",
+    "has_double_slash_redirect",
+    "num_subdomains",
+    "subdomain_length",
+    "is_https",
+    "has_port",
+    "is_suspicious_tld",
+    "is_shortener",
+    "has_punycode",
+    "brand_in_subdomain_not_domain",
+    "min_brand_edit_distance",
+    "suspicious_keyword_count",
+    "hyphen_in_domain",
+    "digit_in_domain",
+    "path_depth",
+    "num_query_params",
+    "longest_word_length",
+    "tld_length",
+    "has_https_in_path"
+  ],
+  "label_convention": "1 = phishing, 0 = legitimate",
+  "dataset_size": 185080,
+  "dataset_sources": [
+    "PhishTank verified-online feed (phishing)",
+    "Cisco Umbrella Popularity List (legitimate)"
+  ],
+  "metrics": {
+    "xgb_branch": {
+      "accuracy": 0.9770549672213817,
+      "roc_auc": 0.9975783150511346
+    },
+    "charcnn_branch": {
+      "accuracy": 0.9912830487717024,
+      "roc_auc": 0.9996707678557533
+    },
+    "hybrid_ensemble": {
+      "accuracy": 0.9930480512931344,
+      "roc_auc": 0.9995987993756233
+    }
+  },
+  "n_folds": 5
+}
