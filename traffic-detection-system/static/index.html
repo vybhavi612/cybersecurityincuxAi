@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Incux Traffic Detection</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Cybersecurity Monitor</p>
+        <h1>Incux Traffic Detection</h1>
+      </div>
+      <div class="status-strip">
+        <span id="monitorStatus">connecting</span>
+        <span id="captureMode">mode</span>
+        <span id="aiMode">ai</span>
+        <span id="firewallStatus">firewall</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="metrics" aria-label="Traffic metrics">
+        <article class="metric">
+          <span>Packets</span>
+          <strong id="totalPackets">0</strong>
+        </article>
+        <article class="metric">
+          <span>Packets/min</span>
+          <strong id="packetsPerMinute">0</strong>
+        </article>
+        <article class="metric">
+          <span>Alerts/hour</span>
+          <strong id="alertsHour">0</strong>
+        </article>
+        <article class="metric danger">
+          <span>Blocked IPs</span>
+          <strong id="blockedCount">0</strong>
+        </article>
+        <article class="metric ai">
+          <span>AI Risk</span>
+          <strong id="aiRisk">0</strong>
+        </article>
+      </section>
+
+      <section class="grid two">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Traffic Timeline</h2>
+            <span id="bytesPerMinute">0 B/min</span>
+          </div>
+          <canvas id="timeline" width="720" height="260"></canvas>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Protocols</h2>
+            <span id="uniqueSources">0 sources</span>
+          </div>
+          <div id="protocolBars" class="bars"></div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>AI Threat Intelligence</h2>
+            <span id="aiInsights">0 insights</span>
+          </div>
+          <div id="aiList" class="ai-list"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Security Alerts</h2>
+            <span id="criticalAlerts">0 critical</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Severity</th>
+                  <th>Type</th>
+                  <th>Source</th>
+                  <th>Evidence</th>
+                </tr>
+              </thead>
+              <tbody id="alertsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Recent Packets</h2>
+            <span>live</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Protocol</th>
+                  <th>Source</th>
+                  <th>Destination</th>
+                  <th>Size</th>
+                </tr>
+              </thead>
+              <tbody id="packetsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Blocked Addresses</h2>
+            <button id="refreshBtn" title="Refresh dashboard" aria-label="Refresh dashboard">↻</button>
+          </div>
+          <div id="blockedList" class="blocked-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
