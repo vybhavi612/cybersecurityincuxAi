@@ -1,11 +1,41 @@
-streamlit
-pandas
-numpy
-plotly
-bcrypt
-reportlab
-Pillow
-requests
-psutil
-fpdf
-matplotlib
+# ==============================================================================
+# Log Management System for Cybersecurity — Python Dependencies
+# ==============================================================================
+# Install with: pip install -r requirements.txt
+# Python version required: 3.10+
+# ==============================================================================
+
+# --- Core Framework ---
+Flask==3.0.3                   # Web application framework
+Werkzeug==3.0.3                # WSGI utilities (password hashing, used by Flask)
+
+# --- Database / ORM ---
+Flask-SQLAlchemy==3.1.1        # SQLAlchemy ORM integration for Flask
+SQLAlchemy==2.0.30             # Core ORM engine
+
+# --- Authentication & Forms ---
+Flask-Login==0.6.3             # Session-based user authentication
+Flask-WTF==1.2.1                # Form handling + CSRF protection
+WTForms==3.1.2                  # Form field validation
+email-validator==2.1.1          # Email format validation for WTForms
+
+# --- Security ---
+Flask-Limiter==3.7.0             # Rate limiting (login brute-force protection)
+Flask-Talisman==1.1.0            # Security headers (CSP, HSTS, X-Frame-Options)
+
+# --- Performance / Caching ---
+Flask-Caching==2.3.0              # In-memory caching for dashboard stat queries
+
+# --- Environment Configuration ---
+python-dotenv==1.0.1               # Loads .env / .flaskenv files
+
+# --- Reporting / Export ---
+reportlab==4.2.0                   # PDF generation (log reports, executive summaries)
+XlsxWriter==3.2.0                  # (reserved for future Excel export support)
+
+# --- Utilities ---
+Faker==25.8.0                       # Realistic sample data generation for seeding
+python-dateutil==2.9.0.post0        # Date/time helpers for log timestamp generation
+
+# --- Production WSGI Server (used by Docker deployment) ---
+gunicorn==22.0.0

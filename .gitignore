@@ -1,0 +1,55 @@
+# ==============================================================================
+# Git Ignore — Log Management System
+# ==============================================================================
+
+# --- Environment / Secrets ---
+.env
+*.env.local
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+ENV/
+
+# --- Database ---
+instance/*.db
+instance/*.sqlite3
+*.db-journal
+
+# --- Application Logs ---
+logs/*.log
+logs/*.log.*
+!logs/.gitkeep
+
+# --- Generated Reports (PDF/CSV exports) ---
+reports/*.pdf
+reports/*.csv
+!reports/.gitkeep
+
+# --- IDE / Editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# --- Testing / Coverage ---
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Docker ---
+*.pid
+
+# --- OS ---
+Thumbs.db
