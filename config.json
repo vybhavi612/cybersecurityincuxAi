@@ -1,0 +1,6 @@
+{
+    "auto_refresh": 5,
+    "packet_threshold": 100,
+    "port_scan_threshold": 20,
+    "dark_mode": true
+}

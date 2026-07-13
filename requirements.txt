@@ -1,11 +1,9 @@
 streamlit
+scapy
 pandas
 numpy
 plotly
-bcrypt
-reportlab
-Pillow
-requests
+scikit-learn
+joblib
+sqlalchemy
 psutil
-fpdf
-matplotlib
